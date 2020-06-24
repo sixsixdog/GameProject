@@ -721,6 +721,7 @@ void CD3DRenderer::SetTextureFilter(int index, int filter, int val)
 
 	m_Device->SetSamplerState(index, fil, v);
 }
+//设置多重纹理
 void CD3DRenderer::SetMultiTextur()
 {
 	if (!m_Device) return;
@@ -735,6 +736,7 @@ void CD3DRenderer::SetMultiTextur()
 	m_Device->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
 	m_Device->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
 }
+//通过纹理
 void CD3DRenderer::ApplyTextur(int index, int texId)
 {
 	if (!m_Device) return;
@@ -744,7 +746,7 @@ void CD3DRenderer::ApplyTextur(int index, int texId)
 	else
 		m_Device->SetTexture(index, m_textureList[texId].image);
 }
-
+//保存截图
 void CD3DRenderer::SaveScreenShot(char* file)
 {
 	if (!file) return;
@@ -762,6 +764,7 @@ void CD3DRenderer::SaveScreenShot(char* file)
 	surface = NULL;
 
 }
+//启用点精灵
 void CD3DRenderer::EnablePointSprites(float size, float min, float a, float b, float c)
 {
 	if (!m_Device) return;
@@ -774,12 +777,13 @@ void CD3DRenderer::EnablePointSprites(float size, float min, float a, float b, f
 	m_Device->SetRenderState(D3DRS_POINTSCALE_A, FtoDW(b));
 	m_Device->SetRenderState(D3DRS_POINTSCALE_A, FtoDW(c));
 }
+//关闭点精灵
 void CD3DRenderer::DisablePointSprites()
 {
 	m_Device->SetRenderState(D3DRS_POINTSPRITEENABLE, false);
 	m_Device->SetRenderState(D3DRS_POINTSCALEENABLE, false);
 }
-
+//添加GUI背景
 bool CD3DRenderer::AddGUIBackdrop(int guiId, char* fileName)
 {
 	if (guiId >= m_totalGUIs) return false;
@@ -802,13 +806,14 @@ bool CD3DRenderer::AddGUIBackdrop(int guiId, char* fileName)
 
 	return m_guiList[guiId].AddBackdrop(texID, staticID);
 }
+//添加GUI静态文本
 bool CD3DRenderer::AddGUIStaticText(int guiId, int id, char* text, int x, int y, unsigned long color, int fontID)
 {
 	if (guiId >= m_totalGUIs) return false;
 
 	return m_guiList[guiId].AddStaticText(id, text, x, y, color, fontID);
 }
-
+//添加GUI按钮
 bool CD3DRenderer::AddGUIButton(int guiId, int id, int x, int y, char* up, char* over, char* down)
 {
 	if (guiId >= m_totalGUIs) return false;
@@ -838,6 +843,7 @@ bool CD3DRenderer::AddGUIButton(int guiId, int id, int x, int y, char* up, char*
 
 	return true;
 }
+//通过GUI
 void CD3DRenderer::ProcessGUI(int guiID, bool LMBDown, int mouseX, int mouseY, void(*funcPtr)(int id, int state))
 {
 	if (guiID >= m_totalGUIs || !m_Device) return;
@@ -891,7 +897,7 @@ void CD3DRenderer::ProcessGUI(int guiID, bool LMBDown, int mouseX, int mouseY, v
 		if (funcPtr) funcPtr(pCnt->m_id, status);
 	}
 }
-
+//创建字体
 bool CD3DRenderer::CreateText(char* font, int weight, bool italic, int size, int& id)
 {
 	if (!m_fonts)
@@ -916,7 +922,7 @@ bool CD3DRenderer::CreateText(char* font, int weight, bool italic, int size, int
 
 		return true;
 }
-
+//显示文本
 bool CD3DRenderer::DisplayText(int id, long x, long y, int r, int g, int b, char* text, ...)
 {
 	RECT FontPosition = { x,y,m_screenWidth,m_screenHeight };
@@ -931,7 +937,7 @@ bool CD3DRenderer::DisplayText(int id, long x, long y, int r, int g, int b, char
 	m_fonts[id]->DrawText(NULL, message, -1, &FontPosition, DT_SINGLELINE, 
 		D3DCOLOR_ARGB(255, r, g, b));
 }
-
+//显示文本
 bool CD3DRenderer::DisplayText(int id, long x, long y, unsigned long color, char* text, ...)
 {
 	RECT FontPosition = { x,y,m_screenWidth,m_screenHeight };

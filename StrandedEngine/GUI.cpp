@@ -1,5 +1,5 @@
 #include "GUI.h"
-
+//增加GUI控件
 int CGUISystem::IncreaseControls()
 {
 	if (!m_controls)
@@ -20,7 +20,7 @@ int CGUISystem::IncreaseControls()
 		m_controls = temp;
 	}
 }
-
+//添加背景
 bool CGUISystem::AddBackdrop(int texID, int sID)
 {
 	if (texID < 0 || sID < 0) return false;
@@ -43,7 +43,7 @@ bool CGUISystem::AddBackdrop(int texID, int sID)
 	}
 	return true;
 }
-
+//添加静态文本
 bool CGUISystem::AddStaticText(int id, char* text, int x, int y, unsigned long color, int fontID)
 {
 	if (!text||fontID<0) return false;
@@ -66,6 +66,7 @@ bool CGUISystem::AddStaticText(int id, char* text, int x, int y, unsigned long c
 	m_totalControls++;
 	return true;
 }
+//添加按钮
 bool CGUISystem::AddButton(int id, int x, int y, int width, int height, int upID, int overID, int downID, unsigned int staticID)
 {
 	if (!IncreaseControls()) return false;
@@ -85,6 +86,7 @@ bool CGUISystem::AddButton(int id, int x, int y, int width, int height, int upID
 
 	return true;
 }
+//停止GUI
 void CGUISystem::Shutdown()
 {
 	for (int s = 0; s < m_totalControls; s++ )
