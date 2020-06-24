@@ -1,0 +1,96 @@
+#ifndef _UGP_DEFINE_H_
+#define _UGP_DEFINE_H_
+
+#include "Windows.h"
+
+#define UGP_INVAILID -1
+#define UGP_OK			1
+#define UGP_FAIL			0
+
+#define LIGHT_POINT 1
+#define LIGHT_DIRECTIONAL 2
+#define LIGHT_SPOT 3
+
+#define PERCENT_OF(a,b)  (int)(a * b)
+
+#define GUI_FVF 2
+
+// 支持的控制类型
+#define  UGP_GUI_STATICTEXT 1
+#define UGP_GUI_BUTTON      2
+#define UGP_GUI_BACKDROP  3
+
+// 鼠标按键状态
+#define  UGP_BUTTON_UP 1
+#define  UGP_BUTTON_OVER 2
+#define  UGP_BUTTON_DOWN 3
+
+#define WinHWND HWND
+
+typedef long VertexType;
+
+enum PrimType
+{
+	NULL_TYPE,
+	POINT_LIST,
+	TRIANGLE_LIST,
+	TRIANGLE_STRIP,
+	TRIANGLE_FUN,
+	LINE_LIST,
+	LINE_STRIP,
+};
+
+enum RenderState
+{
+	CULL_NONE,
+	CULL_CW,
+	CULL_CCW,
+	DEAPTH_NONE,
+	DEAPTH_READONLY,
+	DEAPTH_READWRITE,
+	SHADE_POINT,
+	SHADE_SOLIDTRI,
+	SHADE_WIRETER,
+	SHADEWIREPOLY,
+	TRANSPARENCY_NONE,
+	TRANSPARENCY_ENABLE
+};
+
+enum TransState
+{
+	TRAS_ZERO = 1,
+	TRANS_ONE,
+	TRANS_SRCCOLOR,
+	TRANS_INVSRCCOLOR,
+	TRANS_SRCALPHA,
+	TRANS_INVSRCALPHA,
+	TRANS_DSTALPHA,
+	TRANS_INVDETALPHA,
+	TRANS_DSTCOLOR,
+	TRANS_INVDSTCOLOR,
+	TRANS_SRCALPHASAT,
+	TRANS_BOTHSRCALPHA,
+	TRANS_INVBOTHSRCALPHA,
+	TRANS_BLENDFACTOR,
+	TRANS_INVBLENDFACTOR
+};
+
+enum TextureState
+{
+	MIN_FILTER,
+	MAG_FILTER,
+	MIP_FILTER
+};
+
+enum FilterType
+{
+	POINT_TYPE,
+	LINEAR_TYPE,
+	ANISOTROPIC_TYPE
+};
+
+#define UGPCOLOR_ARGB(a,r,g,b)  ((unsigned long)((((a)&0xff)<<24)|\
+																				(((r)&0xff)<<16)|(((g)&0xff)<<8)|\
+																				((b) & 0xff)))
+
+#endif
