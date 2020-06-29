@@ -12,6 +12,9 @@ inline unsigned long FtoDW(float v)
 #define D3DFVF_GUI (D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1)
 
 //创建D3D渲染器生产器
+/*
+	pObj		渲染器接口
+*/
 bool CreateD3DRenderer(CRenderInterface** pObj)
 {
 	if (!*pObj)* pObj = new CD3DRenderer();
@@ -21,6 +24,9 @@ bool CreateD3DRenderer(CRenderInterface** pObj)
 }
 
 //创建D3D顶点格式
+/*
+	flags		是否是GUI
+*/
 unsigned long CreateD3DFVF(int flags)
 {
 	unsigned long fvf = 0;
@@ -54,6 +60,11 @@ CD3DRenderer::~CD3DRenderer()
 }
 
 //初始化
+/*
+	w,h			窗口大小
+	mainWin		窗口句柄
+	fullScreen	是否全屏
+*/
 bool CD3DRenderer::Initialize(int w, int h, WinHWND mainWin, bool fullScreen)
 {
 	//结束已有数据
@@ -134,9 +145,11 @@ void CD3DRenderer::OneTimeInit()
 }
 
 //透视投影矩阵
-//fov 视角
-//n 近裁减面
-//f 远裁剪面
+/*
+	fov	视角
+	n		近裁减面
+	f		远裁剪面
+*/
 void CD3DRenderer::CalculateProjMatrix(float fov, float n, float f)
 {
 	if (!m_Device) return;
@@ -149,6 +162,10 @@ void CD3DRenderer::CalculateProjMatrix(float fov, float n, float f)
 //正交投影矩阵
 //n 近裁减面
 //f 远裁减面
+/*
+	n		近裁减面
+	f		远裁减面
+*/
 void CD3DRenderer::CalculateOrthoMatrix(float n, float f)
 {
 	if (!m_Device) return;
@@ -159,12 +176,20 @@ void CD3DRenderer::CalculateOrthoMatrix(float n, float f)
 	m_Device->SetTransform(D3DTS_PROJECTION, &ortho);
 }
 //设置擦除颜色值
+/*
+	rgb		颜色值
+*/
 void CD3DRenderer::SetClearCol(float r, float g, float b)
 {
 	//合成D3D颜色
 	m_Color = D3DCOLOR_COLORVALUE(r, g, b, 1.0);
 }
 //开始渲染
+/*
+	bool bColor		是否渲染颜色缓存
+	bool bDepth		是否渲染深度缓存
+	bool bStencil	是否渲染模板缓存
+*/
 void CD3DRenderer::StartRender(bool bColor, bool bDepth, bool bStencil)
 {	
 	//设备对象是否存在
@@ -202,6 +227,11 @@ void CD3DRenderer::EndRendering()
 	m_renderingScene = false;
 }
 //清除缓存
+/*
+	bColor		是否清除颜色缓存
+	bDeoth		是否清除深度缓存
+	bStencil	是否清除模板缓存
+*/
 void CD3DRenderer::ClearBuffers(bool bColor, bool bDepth, bool bStencil)
 {
 	if (!m_Device) return;
@@ -301,7 +331,7 @@ int CD3DRenderer::CreateStaticBuffer(VertexType vType, PrimType primType, int to
 
 	return UGP_OK;
 }
-//总之
+//终止引擎
 void CD3DRenderer::Shutdown()
 {
 	//循环遍历静态缓存列表并释放资源
@@ -371,6 +401,9 @@ void CD3DRenderer::Shutdown()
 }
 
 //设置材质
+/*
+	mat		材质
+*/
 void CD3DRenderer::SetMaterial(stMaterial* mat)
 {
 	if (!mat || !m_Device) return;
@@ -385,6 +418,10 @@ void CD3DRenderer::SetMaterial(stMaterial* mat)
 	m_Device->SetMaterial(&m);
 }
 //设置光源
+/*
+	light		光线对象指针
+	index		光线对象id
+*/
 void CD3DRenderer::SetLight(stLight* light, int index)
 {
 	if (!light || !m_Device || index < 0) return;
@@ -433,12 +470,18 @@ void CD3DRenderer::SetLight(stLight* light, int index)
 	m_Device->LightEnable(index, true);
 }
 //关闭光源
+/*
+	index	光源id
+*/
 void CD3DRenderer::DisableLight(int index)
 {
 	if (!m_Device) return;
 	m_Device->LightEnable(index, false);
 }
-//渲染函数
+//渲染静态缓存
+/*
+	staticId	静态缓存id
+*/
 int CD3DRenderer::Render(int staticId)
 {
 	// 	m_Device->Clear();
@@ -536,6 +579,11 @@ int CD3DRenderer::Render(int staticId)
 	return UGP_OK;
 }
 //设置透明度
+/*
+	state		渲染状态
+	src			源数据混合因子
+	dst			目标数据混合因子
+*/
 void CD3DRenderer::SetTranspency(RenderState state, TransState src, TransState dst)
 {
 	if (!m_Device) return;
@@ -661,6 +709,10 @@ void CD3DRenderer::SetTranspency(RenderState state, TransState src, TransState d
 }
 
 //添加2D纹理
+/*
+	file	纹理文件
+	texId	纹理id
+*/
 int CD3DRenderer::AddTexture2D(char* file, int* texId)
 {
 	if (!file || !m_Device) return UGP_FAIL;
@@ -704,6 +756,11 @@ int CD3DRenderer::AddTexture2D(char* file, int* texId)
 	return UGP_OK;
 }
 //设置纹理过滤器
+/*
+	index	对象id
+	filter	过滤器
+	val		过滤器类型
+*/
 void CD3DRenderer::SetTextureFilter(int index, int filter, int val)
 {
 	if (!m_Device || index < 0) return;
@@ -736,7 +793,11 @@ void CD3DRenderer::SetMultiTextur()
 	m_Device->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
 	m_Device->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
 }
-//通过纹理
+//激活纹理
+/*
+	index	对象id
+	texId	对象纹理id
+*/
 void CD3DRenderer::ApplyTextur(int index, int texId)
 {
 	if (!m_Device) return;
@@ -747,6 +808,9 @@ void CD3DRenderer::ApplyTextur(int index, int texId)
 		m_Device->SetTexture(index, m_textureList[texId].image);
 }
 //保存截图
+/*
+	file	截图位置
+*/
 void CD3DRenderer::SaveScreenShot(char* file)
 {
 	if (!file) return;
@@ -765,6 +829,13 @@ void CD3DRenderer::SaveScreenShot(char* file)
 
 }
 //启用点精灵
+/*
+	size	尺寸
+	min		最小尺寸
+	a		a面缩放
+	b		b面缩放
+	c		c面缩放
+*/
 void CD3DRenderer::EnablePointSprites(float size, float min, float a, float b, float c)
 {
 	if (!m_Device) return;
@@ -774,8 +845,8 @@ void CD3DRenderer::EnablePointSprites(float size, float min, float a, float b, f
 	m_Device->SetRenderState(D3DRS_POINTSIZE, FtoDW(size));
 	m_Device->SetRenderState(D3DRS_POINTSIZE_MIN, FtoDW(min));
 	m_Device->SetRenderState(D3DRS_POINTSCALE_A, FtoDW(a));
-	m_Device->SetRenderState(D3DRS_POINTSCALE_A, FtoDW(b));
-	m_Device->SetRenderState(D3DRS_POINTSCALE_A, FtoDW(c));
+	m_Device->SetRenderState(D3DRS_POINTSCALE_B, FtoDW(b));
+	m_Device->SetRenderState(D3DRS_POINTSCALE_C, FtoDW(c));
 }
 //关闭点精灵
 void CD3DRenderer::DisablePointSprites()
@@ -784,6 +855,10 @@ void CD3DRenderer::DisablePointSprites()
 	m_Device->SetRenderState(D3DRS_POINTSCALEENABLE, false);
 }
 //添加GUI背景
+/*
+	guiID		gui ID号
+	fileName	字体文件
+*/
 bool CD3DRenderer::AddGUIBackdrop(int guiId, char* fileName)
 {
 	if (guiId >= m_totalGUIs) return false;
@@ -807,6 +882,14 @@ bool CD3DRenderer::AddGUIBackdrop(int guiId, char* fileName)
 	return m_guiList[guiId].AddBackdrop(texID, staticID);
 }
 //添加GUI静态文本
+/*
+	guiID		gui ID号
+	id			字体对象id
+	text		文本内容
+	x,y			文本位置
+	color		文本颜色
+	fontID		文本id
+*/
 bool CD3DRenderer::AddGUIStaticText(int guiId, int id, char* text, int x, int y, unsigned long color, int fontID)
 {
 	if (guiId >= m_totalGUIs) return false;
@@ -814,6 +897,14 @@ bool CD3DRenderer::AddGUIStaticText(int guiId, int id, char* text, int x, int y,
 	return m_guiList[guiId].AddStaticText(id, text, x, y, color, fontID);
 }
 //添加GUI按钮
+/*
+	guiID		gui ID号
+	id			按钮 ID
+	x,y			坐标
+	up			弹起纹理
+	over		选中纹理
+	down		点击纹理
+*/
 bool CD3DRenderer::AddGUIButton(int guiId, int id, int x, int y, char* up, char* over, char* down)
 {
 	if (guiId >= m_totalGUIs) return false;
@@ -844,6 +935,12 @@ bool CD3DRenderer::AddGUIButton(int guiId, int id, int x, int y, char* up, char*
 	return true;
 }
 //通过GUI
+/*
+	guiID			gui	ID号
+	LMBDown			鼠标是否按下
+	mouseX，mouseY	鼠标坐标
+	funcPtr			gui控件回调
+*/
 void CD3DRenderer::ProcessGUI(int guiID, bool LMBDown, int mouseX, int mouseY, void(*funcPtr)(int id, int state))
 {
 	if (guiID >= m_totalGUIs || !m_Device) return;
@@ -859,10 +956,12 @@ void CD3DRenderer::ProcessGUI(int guiID, bool LMBDown, int mouseX, int mouseY, v
 		ApplyTextur(0, -1);
 	}
 
-	int status = UGP_BUTTON_UP;
+	
 
 	for (int i = 0; i < gui->GetTotalControls(); i++)
 	{
+		int status = UGP_BUTTON_UP;//默认为弹起
+
 		stGUIControl* pCnt = gui->GetGUICotrol(i);
 		if (!pCnt) continue;
 		switch (pCnt->m_type)
@@ -876,7 +975,8 @@ void CD3DRenderer::ProcessGUI(int guiID, bool LMBDown, int mouseX, int mouseY, v
 			m_Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
 			if (mouseX > pCnt->m_xPos && mouseX < pCnt->m_xPos + pCnt->m_width &&
-				mouseY > pCnt->m_yPos && mouseY < pCnt->m_yPos + pCnt->m_height)
+				mouseY > pCnt->m_yPos-pCnt->m_height/2 && mouseY < pCnt->m_yPos + pCnt->m_height-pCnt->m_height/2)
+				//mouseY > pCnt->m_yPos && mouseY < pCnt->m_yPos + pCnt->m_height)修复按钮点击偏移
 			{
 				if (LMBDown) status = UGP_BUTTON_DOWN;
 				else
@@ -887,7 +987,6 @@ void CD3DRenderer::ProcessGUI(int guiID, bool LMBDown, int mouseX, int mouseY, v
 			if (status == UGP_BUTTON_OVER) ApplyTextur(0, pCnt->m_overTex);
 			if (status == UGP_BUTTON_DOWN) ApplyTextur(0, pCnt->m_downTex);
 
-			status = UGP_BUTTON_UP;
 			Render(pCnt->m_listID);
 
 			m_Device->SetRenderState(D3DRS_ALPHABLENDENABLE, false);
@@ -898,6 +997,13 @@ void CD3DRenderer::ProcessGUI(int guiID, bool LMBDown, int mouseX, int mouseY, v
 	}
 }
 //创建字体
+/*
+	font	绘制的字体
+	weght	字体宽度
+	italic	是否斜体
+	size	字体尺寸
+	id		字体对象id号
+*/
 bool CD3DRenderer::CreateText(char* font, int weight, bool italic, int size, int& id)
 {
 	if (!m_fonts)
@@ -923,6 +1029,12 @@ bool CD3DRenderer::CreateText(char* font, int weight, bool italic, int size, int
 		return true;
 }
 //显示文本
+/*
+	id		字体对象id号
+	x，y	文字坐标
+	rgb		文字RGB颜色值
+	text	文字内容
+*/
 bool CD3DRenderer::DisplayText(int id, long x, long y, int r, int g, int b, char* text, ...)
 {
 	RECT FontPosition = { x,y,m_screenWidth,m_screenHeight };
@@ -938,6 +1050,13 @@ bool CD3DRenderer::DisplayText(int id, long x, long y, int r, int g, int b, char
 		D3DCOLOR_ARGB(255, r, g, b));
 }
 //显示文本
+/*
+	id		字体对象id
+	x,y		文字坐标
+	color	颜色
+	text	文字内容
+
+*/
 bool CD3DRenderer::DisplayText(int id, long x, long y, unsigned long color, char* text, ...)
 {
 	RECT FontPosition = { x,y,m_screenWidth,m_screenHeight };
