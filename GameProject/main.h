@@ -22,7 +22,6 @@ bool InitializeMainMenu();
 void MainMenuRender();
 void MainMenuCallBack(int id, int state);
 
-
 bool GameInitialize();
 void GameLoop();
 void GameShutdown();
@@ -37,6 +36,5 @@ void GameShutdown();
 #define  BUTTON_QUIT_ID 4
 #define BUTTON_BACK_ID 5
 #define BUTTONLEVEL_1_ID 6
-
 
 #endif

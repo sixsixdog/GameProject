@@ -57,5 +57,4 @@ private:
 	int m_backDropID;
 };
 
-
 #endif

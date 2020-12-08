@@ -24,8 +24,8 @@ int CGUISystem::IncreaseControls()
 bool CGUISystem::AddBackdrop(int texID, int sID)
 {
 	if (texID < 0 || sID < 0) return false;
-	
-	if (m_backDropID<0)
+
+	if (m_backDropID < 0)
 	{
 		if (!IncreaseControls()) return false;
 		m_controls[m_totalControls].m_type = UGP_GUI_BACKDROP;
@@ -46,7 +46,7 @@ bool CGUISystem::AddBackdrop(int texID, int sID)
 //Ìí¼Ó¾²Ì¬ÎÄ±¾
 bool CGUISystem::AddStaticText(int id, char* text, int x, int y, unsigned long color, int fontID)
 {
-	if (!text||fontID<0) return false;
+	if (!text || fontID < 0) return false;
 
 	if (!IncreaseControls()) return false;
 
@@ -89,7 +89,7 @@ bool CGUISystem::AddButton(int id, int x, int y, int width, int height, int upID
 //Í£Ö¹GUI
 void CGUISystem::Shutdown()
 {
-	for (int s = 0; s < m_totalControls; s++ )
+	for (int s = 0; s < m_totalControls; s++)
 	{
 		if (m_controls[s].m_text)
 		{

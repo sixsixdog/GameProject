@@ -88,5 +88,4 @@ protected:
 	float m_far;
 };
 
-
 #endif

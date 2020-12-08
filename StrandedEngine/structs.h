@@ -8,5 +8,4 @@ struct stGUIVertex
 	float tu, tv;
 };
 
-
 #endif

@@ -1,7 +1,6 @@
 #ifndef _UGP_MATERAIL_H_
 #define _UGP_MATERAIL_H_
 
-
 struct stMaterial
 {
 	stMaterial()
@@ -17,7 +16,6 @@ struct stMaterial
 	float specularR, specularG, specularB, specularA;
 	float emissiveR, emissiveG, emissiveB, emissiveA;
 	float power;
-
 };
 
 #endif

@@ -103,10 +103,8 @@ int WINAPI WinMain(HINSTANCE h, HINSTANCE P, LPSTR cmd, int show)
 					//游戏循环
 					GameLoop();
 				}
-
 			}
 		}
-
 	}
 	//结束游戏进程
 	GameShutdown();
@@ -117,15 +115,15 @@ int WINAPI WinMain(HINSTANCE h, HINSTANCE P, LPSTR cmd, int show)
 }
 //初始化引擎
 bool InitializeEngine()
-{		
-		//创建D3D渲染器
-		if (FAILED(CreateD3DRenderer(&g_Render))) return false;
-		//初始化
-		if (FAILED(g_Render->Initialize(WIN_WIDTH, WIN_HIGHT, g_hwnd, FULLSCREEN))) return false;
+{
+	//创建D3D渲染器
+	if (FAILED(CreateD3DRenderer(&g_Render))) return false;
+	//初始化
+	if (FAILED(g_Render->Initialize(WIN_WIDTH, WIN_HIGHT, g_hwnd, FULLSCREEN))) return false;
 
-		//设置擦除颜色
+	//设置擦除颜色
 	g_Render->SetClearCol(0, 0, 0);
-		//创建字体
+	//创建字体
 	if (!g_Render->CreateText((char*)"Arial", 0, true, 18, g_arialID))
 		return false;
 
@@ -136,7 +134,7 @@ void ShutDownEngine()
 {
 	//如果渲染器存在
 	if (g_Render)
-	{	
+	{
 		//停止渲染器
 		g_Render->Shutdown();
 		//删除渲染器
@@ -164,7 +162,6 @@ void GameLoop()
 //游戏结束函数
 void GameShutdown()
 {
-
 }
 
 //初始化菜单数据
@@ -176,18 +173,18 @@ bool InitializeMainMenu()
 	if (!g_Render->CreateGUI(g_startGui)) return false;
 
 	//添加UI背景
-	if(!g_Render->AddGUIBackdrop(g_mainGui, (char*)"menu/mainMenu.jpg"))
+	if (!g_Render->AddGUIBackdrop(g_mainGui, (char*)"menu/mainMenu.jpg"))
 		return false;
 	if (!g_Render->AddGUIBackdrop(g_startGui, (char*)"menu/startMenu.jpg"))
 		return false;
 
 	//添加静态文本
-	if(!g_Render->AddGUIStaticText(g_mainGui, STATIC_TEXT_ID, (char*)"Version:1.0",
-														PERCENT_OF(WIN_WIDTH, 0.85),
-														PERCENT_OF(WIN_HIGHT, 0.05),
-														UGPCOLOR_ARGB(255, 255, 255, 255),
-														g_arialID))
-				return false;
+	if (!g_Render->AddGUIStaticText(g_mainGui, STATIC_TEXT_ID, (char*)"Version:1.0",
+		PERCENT_OF(WIN_WIDTH, 0.85),
+		PERCENT_OF(WIN_HIGHT, 0.05),
+		UGPCOLOR_ARGB(255, 255, 255, 255),
+		g_arialID))
+		return false;
 	//添加按钮
 	if (!g_Render->AddGUIButton(g_mainGui, BUTTON_START_ID, PERCENT_OF(WIN_WIDTH, 0.05),
 		PERCENT_OF(WIN_HIGHT, 0.4),
@@ -213,12 +210,11 @@ void MainMenuCallBack(int id, int state)
 	switch (id)
 	{
 	case BUTTON_START_ID:
-		if (state==UGP_BUTTON_DOWN)
+		if (state == UGP_BUTTON_DOWN)
 		{
 			g_currentGui = GUI_START_SCREEN;
 		}
 	}
-
 }
 
 //主场单渲染
@@ -229,10 +225,9 @@ void MainMenuRender()
 	g_Render->StartRender(1, 1, 0);
 
 	if (g_currentGui == GUI_MAIN_SCREEN)
-		g_Render->ProcessGUI(g_mainGui,LMBDown,mouseX,mouseY,MainMenuCallBack);
+		g_Render->ProcessGUI(g_mainGui, LMBDown, mouseX, mouseY, MainMenuCallBack);
 	if (g_currentGui == GUI_START_SCREEN)
 		g_Render->ProcessGUI(g_startGui, LMBDown, mouseX, mouseY, MainMenuCallBack);
-
 
 	g_Render->EndRendering();
 }

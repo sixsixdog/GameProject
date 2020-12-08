@@ -5,7 +5,7 @@
 //FLOAT转DWORD
 inline unsigned long FtoDW(float v)
 {
-	return *((unsigned long*)& v);
+	return *((unsigned long*)&v);
 }
 
 //D3D顶点格式
@@ -17,7 +17,7 @@ inline unsigned long FtoDW(float v)
 */
 bool CreateD3DRenderer(CRenderInterface** pObj)
 {
-	if (!*pObj)* pObj = new CD3DRenderer();
+	if (!*pObj)*pObj = new CD3DRenderer();
 	else
 		return false;
 	return true;
@@ -191,7 +191,7 @@ void CD3DRenderer::SetClearCol(float r, float g, float b)
 	bool bStencil	是否渲染模板缓存
 */
 void CD3DRenderer::StartRender(bool bColor, bool bDepth, bool bStencil)
-{	
+{
 	//设备对象是否存在
 	if (!m_Device) return;
 
@@ -250,7 +250,6 @@ void CD3DRenderer::ClearBuffers(bool bColor, bool bDepth, bool bStencil)
 	//重新开始渲染
 	if (m_renderingScene)
 		if (FAILED(m_Device->BeginScene())) return;
-
 }
 
 //创建静态缓存
@@ -303,7 +302,7 @@ int CD3DRenderer::CreateStaticBuffer(VertexType vType, PrimType primType, int to
 			D3DFMT_INDEX16, D3DPOOL_DEFAULT, &m_staticBufferList[index].ibPtr, NULL)))
 			return UGP_FAIL;
 		//锁定索引缓存
-		if (FAILED(m_staticBufferList[index].ibPtr->Lock(0, 0, (void**)& ptr, 0)))
+		if (FAILED(m_staticBufferList[index].ibPtr->Lock(0, 0, (void**)&ptr, 0)))
 			return UGP_FAIL;
 		//拷贝数据
 		memcpy(ptr, indices, sizeof(unsigned int) * totalIndices);
@@ -319,7 +318,7 @@ int CD3DRenderer::CreateStaticBuffer(VertexType vType, PrimType primType, int to
 		D3DPOOL_DEFAULT, &m_staticBufferList[index].vbPtr, NULL)))
 		return UGP_FAIL;
 	//锁定顶点缓存
-	if (FAILED(m_staticBufferList[index].vbPtr->Lock(0, 0, (void**)& ptr, 0)))
+	if (FAILED(m_staticBufferList[index].vbPtr->Lock(0, 0, (void**)&ptr, 0)))
 		return UGP_FAIL;
 	//拷贝数据
 	memcpy(ptr, data, totalVerts * stride);
@@ -354,7 +353,7 @@ void CD3DRenderer::Shutdown()
 	m_staticBufferList = NULL;
 
 	//循环遍历字体列表并释放
-	for (int s=0;s<m_totalFonts;s++)
+	for (int s = 0; s < m_totalFonts; s++)
 	{
 		if (m_fonts[s])
 		{
@@ -491,7 +490,7 @@ int CD3DRenderer::Render(int staticId)
 
 	//当前静态缓存区是否不是正在使用的缓存区
 	if (m_activeStaticBuffer != staticId)
-	{	
+	{
 		//设置索引缓存
 		if (m_staticBufferList[staticId].ibPtr != NULL)
 			m_Device->SetIndices(m_staticBufferList[staticId].ibPtr);
@@ -538,8 +537,6 @@ int CD3DRenderer::Render(int staticId)
 		default:
 			return UGP_FAIL;
 		}
-
-
 	}
 	else
 	{
@@ -594,7 +591,7 @@ void CD3DRenderer::SetTranspency(RenderState state, TransState src, TransState d
 		return;
 	}
 	else	if (state == TRANSPARENCY_ENABLE)
-	{	
+	{
 		//打开阿尔法过滤器
 		m_Device->SetRenderState(D3DRS_ALPHABLENDENABLE, true);
 		//设置源数据混合因子
@@ -704,8 +701,6 @@ void CD3DRenderer::SetTranspency(RenderState state, TransState src, TransState d
 			break;
 		}
 	}
-
-
 }
 
 //添加2D纹理
@@ -727,7 +722,7 @@ int CD3DRenderer::AddTexture2D(char* file, int* texId)
 		if (!m_textureList) return UGP_FAIL;
 	}
 	else
-	{	
+	{
 		//扩容纹理列表
 		stD3DTexture* temp;
 		temp = new stD3DTexture[m_numTextures + 1];
@@ -736,9 +731,8 @@ int CD3DRenderer::AddTexture2D(char* file, int* texId)
 		delete[] m_textureList;
 		m_textureList = temp;
 	}
-
-	m_textureList[index].fileName = new char[len];
-	memcpy(m_textureList[index].fileName, file, len);
+	m_textureList[index].fileName = new char[len + 1];
+	memcpy(m_textureList[index].fileName, file, len + 1);
 
 	D3DCOLOR colorkey = 0xff000000;
 	D3DXIMAGE_INFO info;
@@ -826,7 +820,6 @@ void CD3DRenderer::SaveScreenShot(char* file)
 
 	if (surface != NULL) surface->Release();
 	surface = NULL;
-
 }
 //启用点精灵
 /*
@@ -877,7 +870,7 @@ bool CD3DRenderer::AddGUIBackdrop(int guiId, char* fileName)
 		{0,(float)m_screenHeight,0,1,col,0,1},
 	};
 
-	if (!CreateStaticBuffer(GUI_FVF, TRIANGLE_STRIP, 4, 0, sizeof(stGUIVertex), (void**)& obj, NULL, &staticID)) return false;
+	if (!CreateStaticBuffer(GUI_FVF, TRIANGLE_STRIP, 4, 0, sizeof(stGUIVertex), (void**)&obj, NULL, &staticID)) return false;
 
 	return m_guiList[guiId].AddBackdrop(texID, staticID);
 }
@@ -927,7 +920,7 @@ bool CD3DRenderer::AddGUIButton(int guiId, int id, int x, int y, char* up, char*
 		{(float)(0 + x),(float)(h + y),0,1,col,0,1},
 	};
 
-	if (!CreateStaticBuffer(GUI_FVF, TRIANGLE_STRIP, 4, 0, sizeof(stGUIVertex), (void**)& obj, NULL,
+	if (!CreateStaticBuffer(GUI_FVF, TRIANGLE_STRIP, 4, 0, sizeof(stGUIVertex), (void**)&obj, NULL,
 		&staticID)) return false;
 
 	m_guiList[guiId].AddButton(id, x, y, w, h, upID, overID, downID, staticID);
@@ -956,8 +949,6 @@ void CD3DRenderer::ProcessGUI(int guiID, bool LMBDown, int mouseX, int mouseY, v
 		ApplyTextur(0, -1);
 	}
 
-	
-
 	for (int i = 0; i < gui->GetTotalControls(); i++)
 	{
 		int status = UGP_BUTTON_UP;//默认为弹起
@@ -975,7 +966,7 @@ void CD3DRenderer::ProcessGUI(int guiID, bool LMBDown, int mouseX, int mouseY, v
 			m_Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
 			if (mouseX > pCnt->m_xPos && mouseX < pCnt->m_xPos + pCnt->m_width &&
-				mouseY > pCnt->m_yPos-pCnt->m_height/2 && mouseY < pCnt->m_yPos + pCnt->m_height-pCnt->m_height/2)
+				mouseY > pCnt->m_yPos - pCnt->m_height / 2 && mouseY < pCnt->m_yPos + pCnt->m_height - pCnt->m_height / 2)
 				//mouseY > pCnt->m_yPos && mouseY < pCnt->m_yPos + pCnt->m_height)修复按钮点击偏移
 			{
 				if (LMBDown) status = UGP_BUTTON_DOWN;
@@ -1021,12 +1012,12 @@ bool CD3DRenderer::CreateText(char* font, int weight, bool italic, int size, int
 		delete[] m_fonts;
 		m_fonts = temp;
 	}
-		if (FAILED(D3DXCreateFont(m_Device,size,0,weight,1,italic,
-			0,0,0,0,font,&m_fonts[m_totalFonts]))) return false;
-		id = m_totalFonts;
-		m_totalFonts++;
+	if (FAILED(D3DXCreateFont(m_Device, size, 0, weight, 1, italic,
+		0, 0, 0, 0, font, &m_fonts[m_totalFonts]))) return false;
+	id = m_totalFonts;
+	m_totalFonts++;
 
-		return true;
+	return true;
 }
 //显示文本
 /*
@@ -1041,12 +1032,12 @@ bool CD3DRenderer::DisplayText(int id, long x, long y, int r, int g, int b, char
 	char message[1024];
 	va_list argList;
 	if (id >= m_totalFonts) return false;
-	
+
 	va_start(argList, text);
 	vsprintf_s(message, text, argList);
 	va_end(argList);
 
-	m_fonts[id]->DrawText(NULL, message, -1, &FontPosition, DT_SINGLELINE, 
+	m_fonts[id]->DrawText(NULL, message, -1, &FontPosition, DT_SINGLELINE,
 		D3DCOLOR_ARGB(255, r, g, b));
 }
 //显示文本

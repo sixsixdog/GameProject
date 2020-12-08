@@ -1,7 +1,6 @@
 #ifndef _UGP_LIGHT_H_
 #define _UGP_LIGHT_H_
 
-
 struct stLight
 {
 	stLight()
@@ -34,23 +33,5 @@ struct stLight
 	float theta;
 	float phi;
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 #endif
