@@ -1,15 +1,14 @@
 #include "main.h"
-HWND g_hwnd;
-CRenderInterface* g_Render = NULL;
 
+CRenderInterface* g_Render = NULL;
+HWND g_hwnd;
+
+bool LMBDown = false;
 int g_mainGui = -1;
 int g_startGui = -1;
 int g_creditsGui = -1;
 int g_currentGui = GUI_MAIN_SCREEN;
-
 int g_arialID = -1;
-
-bool LMBDown = false;
 //鼠标按下
 int mouseX = 0, mouseY = 0;
 //鼠标位置
@@ -24,10 +23,10 @@ LRESULT WINAPI MsgPro(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		//发送退出消息
 		return 0;
 		break;
+		//键码为esc
 	case WM_KEYDOWN:
 		//键盘按下
 		if (wParam == VK_ESCAPE)
-			//键码为esc
 			PostQuitMessage(0);
 		//发送退出消息
 		break;
@@ -54,6 +53,7 @@ int WINAPI WinMain(HINSTANCE h, HINSTANCE P, LPSTR cmd, int show)
 	//窗体类
 	WNDCLASSEX wc = { sizeof(WNDCLASSEX),CS_CLASSDC,MsgPro,NULL,NULL,h,NULL,NULL,(HBRUSH)GetStockObject(WHITE_BRUSH)
 	,NULL,WINDOW_CLASS };
+
 	//注册窗体
 	RegisterClassEx(&wc);
 
@@ -83,8 +83,8 @@ int WINAPI WinMain(HINSTANCE h, HINSTANCE P, LPSTR cmd, int show)
 			//创建消息体并初始化
 			MSG msg;
 			ZeroMemory(&msg, sizeof(msg));
-
 			//设置鼠标位置
+
 /*			SetCursorPos(0, 0);*/
 
 			//循环至接收到退出消息
@@ -149,6 +149,7 @@ bool GameInitialize()
 {
 	//初始化菜单
 	if (!InitializeMainMenu()) return false;
+
 	return true;
 }
 
@@ -171,34 +172,27 @@ bool InitializeMainMenu()
 	if (!g_Render->CreateGUI(g_mainGui)) return false;
 	//创建开始界面UI
 	if (!g_Render->CreateGUI(g_startGui)) return false;
-
-	//添加UI背景
-	if (!g_Render->AddGUIBackdrop(g_mainGui, (char*)"menu/mainMenu.jpg"))
-		return false;
-	if (!g_Render->AddGUIBackdrop(g_startGui, (char*)"menu/startMenu.jpg"))
-		return false;
-
+	//添加主菜单UI背景
+	if (!g_Render->AddGUIBackdrop(g_mainGui, (char*)"menu/mainMenu.jpg")) return false;
+	//添加开始菜单UI背景
+	if (!g_Render->AddGUIBackdrop(g_startGui, (char*)"menu/startMenu.jpg")) return false;
 	//添加静态文本
 	if (!g_Render->AddGUIStaticText(g_mainGui, STATIC_TEXT_ID, (char*)"Version:1.0",
 		PERCENT_OF(WIN_WIDTH, 0.85),
 		PERCENT_OF(WIN_HIGHT, 0.05),
 		UGPCOLOR_ARGB(255, 255, 255, 255),
-		g_arialID))
-		return false;
+		g_arialID)) return false;
 	//添加按钮
 	if (!g_Render->AddGUIButton(g_mainGui, BUTTON_START_ID, PERCENT_OF(WIN_WIDTH, 0.05),
-		PERCENT_OF(WIN_HIGHT, 0.4),
-		(char*)"menu/startUp.png", (char*)"menu/startDown.png",
+		PERCENT_OF(WIN_HIGHT, 0.4), (char*)"menu/startUp.png", (char*)"menu/startDown.png",
 		(char*)"menu/startOver.png")) return false;
 	//添加按钮
 	if (!g_Render->AddGUIButton(g_mainGui, BUTTON_CREDITS_ID, PERCENT_OF(WIN_WIDTH, 0.05),
-		PERCENT_OF(WIN_HIGHT, 0.5),
-		(char*)"menu/creditsUp.png", (char*)"menu/creditsDown.png",
+		PERCENT_OF(WIN_HIGHT, 0.5), (char*)"menu/creditsUp.png", (char*)"menu/creditsDown.png",
 		(char*)"menu/creditsOver.png")) return false;
 	//添加按钮
 	if (!g_Render->AddGUIButton(g_mainGui, BUTTON_QUIT_ID, PERCENT_OF(WIN_WIDTH, 0.05),
-		PERCENT_OF(WIN_HIGHT, 0.6),
-		(char*)"menu/quitUp.png", (char*)"menu/quitDown.png",
+		PERCENT_OF(WIN_HIGHT, 0.6), (char*)"menu/quitUp.png", (char*)"menu/quitDown.png",
 		(char*)"menu/quitOver.png")) return false;
 
 	return true;

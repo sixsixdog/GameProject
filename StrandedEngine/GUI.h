@@ -5,22 +5,21 @@
 
 struct stGUIControl
 {
-	stGUIControl() :m_text(NULL) {};
 	//GUI控制类型 ID 颜色
+	stGUIControl() :m_text(NULL), m_type(0), m_id(0), m_listID(0), m_upTex(0), m_downTex(0), m_overTex(0), m_xPos(0), m_yPos(0), m_width(0), m_height(0), m_color(0) {};
+
+	//静态文本
+	char* m_text;
 	int m_type;
 	int m_id;
-	unsigned long m_color;
-
 	//如果是字体ID是正在使用的字体
 	int m_listID;
+	int m_upTex, m_downTex, m_overTex;
 	//开始的控制位置
 	float m_xPos, m_yPos;
 	//按钮大小
 	float m_width, m_height;
-	//静态文本
-	char* m_text;
-
-	int m_upTex, m_downTex, m_overTex;
+	unsigned long m_color;
 };
 
 class CGUISystem
@@ -29,20 +28,25 @@ public:
 	CGUISystem() :m_controls(0), m_totalControls(0), m_backDropID(-1) {}
 	~CGUISystem() { Shutdown(); }
 
-	int IncreaseControls();
-
+	void Shutdown();
 	bool AddBackdrop(int texID, int staticID);
 	bool AddStaticText(int id, char* text, int x, int y, unsigned long color, int fontID);
 	bool AddButton(int id, int x, int y, int width, int height, int upID, int overID, int downID, unsigned int staticID);
-	void Shutdown();
+	int IncreaseControls();
 
 	stGUIControl* GetGUICotrol(int id)
 	{
-		if (id < 0 || id >= m_totalControls) return NULL;
+		if (id < 0 || id >= m_totalControls)
+			return NULL;
+
 		return &m_controls[id];
 	}
 
-	int GetTotalControls() { return m_totalControls; }
+	int GetTotalControls()
+	{
+		return m_totalControls;
+	}
+
 	stGUIControl* GetbackDrop()
 	{
 		if (m_backDropID >= 0 && m_totalControls)

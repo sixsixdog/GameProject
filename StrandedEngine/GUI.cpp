@@ -100,5 +100,6 @@ void CGUISystem::Shutdown()
 
 	m_totalControls = 0;
 	if (m_controls) delete[] m_controls;
+
 	m_controls = NULL;
 }

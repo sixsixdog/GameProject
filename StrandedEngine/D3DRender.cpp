@@ -107,7 +107,6 @@ bool CD3DRenderer::Initialize(int w, int h, WinHWND mainWin, bool fullScreen)
 	else
 	{
 		Params.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
-
 		Params.Windowed = !m_fullscreen;
 		Params.BackBufferWidth = w;
 		Params.BackBufferHeight = h;
@@ -153,8 +152,8 @@ void CD3DRenderer::OneTimeInit()
 void CD3DRenderer::CalculateProjMatrix(float fov, float n, float f)
 {
 	if (!m_Device) return;
-	D3DXMATRIX projection;
 
+	D3DXMATRIX projection;
 	D3DXMatrixPerspectiveFovLH(&projection, fov, (float)m_screenWidth / (float)m_screenHeight, n, f);
 	//设置矩阵
 	m_Device->SetTransform(D3DTS_PROJECTION, &projection);
@@ -169,6 +168,7 @@ void CD3DRenderer::CalculateProjMatrix(float fov, float n, float f)
 void CD3DRenderer::CalculateOrthoMatrix(float n, float f)
 {
 	if (!m_Device) return;
+
 	D3DXMATRIX ortho;
 	//以左手坐标系计算正交矩阵
 	D3DXMatrixOrthoLH(&ortho, (float)m_screenWidth, (float)m_screenHeight, n, f);
@@ -203,10 +203,8 @@ void CD3DRenderer::StartRender(bool bColor, bool bDepth, bool bStencil)
 	if (bDepth) buffers |= D3DCLEAR_ZBUFFER;
 	//擦除模板缓存
 	if (bStencil) buffers |= D3DCLEAR_STENCIL;
-
 	//开始擦除
 	if (FAILED(m_Device->Clear(0, NULL, buffers, m_Color, 1, 0))) return;
-
 	//开始渲染
 	if (FAILED(m_Device->BeginScene())) return;
 
@@ -242,14 +240,11 @@ void CD3DRenderer::ClearBuffers(bool bColor, bool bDepth, bool bStencil)
 	if (bDepth) buffers |= D3DCLEAR_ZBUFFER;
 	if (bStencil) buffers |= D3DCLEAR_STENCIL;
 	//弃用正在进行的渲染
-	if (m_renderingScene)
-		m_Device->EndScene();
+	if (m_renderingScene) m_Device->EndScene();
 	//清除缓存
-	if (FAILED(m_Device->Clear(0, NULL, buffers, m_Color, 1, 0)))
-		return;
+	if (FAILED(m_Device->Clear(0, NULL, buffers, m_Color, 1, 0))) return;
 	//重新开始渲染
-	if (m_renderingScene)
-		if (FAILED(m_Device->BeginScene())) return;
+	if (m_renderingScene) if (FAILED(m_Device->BeginScene())) return;
 }
 
 //创建静态缓存
@@ -324,7 +319,6 @@ int CD3DRenderer::CreateStaticBuffer(VertexType vType, PrimType primType, int to
 	memcpy(ptr, data, totalVerts * stride);
 	//解锁顶点缓存
 	m_staticBufferList[index].vbPtr->Unlock();
-
 	*staticId = m_numStaticBuffers;
 	m_numStaticBuffers++;
 
@@ -350,8 +344,8 @@ void CD3DRenderer::Shutdown()
 
 	m_numStaticBuffers = 0;
 	if (m_staticBufferList) delete[] m_staticBufferList;
-	m_staticBufferList = NULL;
 
+	m_staticBufferList = NULL;
 	//循环遍历字体列表并释放
 	for (int s = 0; s < m_totalFonts; s++)
 	{
@@ -363,8 +357,8 @@ void CD3DRenderer::Shutdown()
 	}
 	m_totalFonts = 0;
 	if (m_fonts) delete[] m_fonts;
-	m_fonts = NULL;
 
+	m_fonts = NULL;
 	//释放纹理列表
 	for (unsigned int s = 0; s < m_numTextures; s++)
 	{
@@ -381,8 +375,8 @@ void CD3DRenderer::Shutdown()
 	}
 	m_numTextures = 0;
 	if (m_textureList) delete[] m_textureList;
-	m_textureList = NULL;
 
+	m_textureList = NULL;
 	//释放GUI列表
 	for (int s = 0; s < m_totalGUIs; s++)
 	{
@@ -390,8 +384,8 @@ void CD3DRenderer::Shutdown()
 	}
 	m_totalGUIs = 0;
 	if (m_guiList) delete[] m_guiList;
-	m_guiList = NULL;
 
+	m_guiList = NULL;
 	if (m_Device) m_Device->Release();
 	if (m_Direct3D)m_Direct3D->Release();
 
@@ -406,12 +400,13 @@ void CD3DRenderer::Shutdown()
 void CD3DRenderer::SetMaterial(stMaterial* mat)
 {
 	if (!mat || !m_Device) return;
+
 	//设置材质属性
 	D3DMATERIAL9 m = { mat->diffuseR,mat->diffuseG,mat->diffuseB,mat->diffuseA,
-									mat->ambientR,mat->ambientG,mat->ambientB,mat->ambientA,
-									mat->specularR,mat->specularG,mat->specularB,mat->specularA,
-									mat->emissiveR,mat->emissiveG,mat->emissiveB,mat->emissiveA,
-									mat->power
+						mat->ambientR,mat->ambientG,mat->ambientB,mat->ambientA,
+						mat->specularR,mat->specularG,mat->specularB,mat->specularA,
+						mat->emissiveR,mat->emissiveG,mat->emissiveB,mat->emissiveA,
+						mat->power
 	};
 
 	m_Device->SetMaterial(&m);
@@ -424,6 +419,7 @@ void CD3DRenderer::SetMaterial(stMaterial* mat)
 void CD3DRenderer::SetLight(stLight* light, int index)
 {
 	if (!light || !m_Device || index < 0) return;
+
 	//设置光源属性
 	D3DLIGHT9 l;
 	l.Ambient.r = light->ambientR;
@@ -475,6 +471,7 @@ void CD3DRenderer::SetLight(stLight* light, int index)
 void CD3DRenderer::DisableLight(int index)
 {
 	if (!m_Device) return;
+
 	m_Device->LightEnable(index, false);
 }
 //渲染静态缓存
@@ -584,6 +581,7 @@ int CD3DRenderer::Render(int staticId)
 void CD3DRenderer::SetTranspency(RenderState state, TransState src, TransState dst)
 {
 	if (!m_Device) return;
+
 	//设置不透明
 	if (state == TRANSPARENCY_NONE)
 	{
@@ -711,6 +709,7 @@ void CD3DRenderer::SetTranspency(RenderState state, TransState src, TransState d
 int CD3DRenderer::AddTexture2D(char* file, int* texId)
 {
 	if (!file || !m_Device) return UGP_FAIL;
+
 	int len = strlen(file);
 	if (!len) return UGP_FAIL;
 
@@ -819,6 +818,7 @@ void CD3DRenderer::SaveScreenShot(char* file)
 	D3DXSaveSurfaceToFile(file, D3DXIFF_JPG, surface, NULL, NULL);
 
 	if (surface != NULL) surface->Release();
+
 	surface = NULL;
 }
 //启用点精灵
@@ -861,7 +861,6 @@ bool CD3DRenderer::AddGUIBackdrop(int guiId, char* fileName)
 	if (!AddTexture2D(fileName, &texID)) return false;
 
 	unsigned long col = D3DCOLOR_XRGB(255, 255, 255);
-
 	stGUIVertex obj[] =
 	{
 		{(float)m_screenWidth,0,0,1,col,1,0},
@@ -908,10 +907,8 @@ bool CD3DRenderer::AddGUIButton(int guiId, int id, int x, int y, char* up, char*
 	if (!AddTexture2D(down, &downID)) return false;
 
 	unsigned long col = D3DCOLOR_XRGB(255, 255, 255);
-
 	int w = m_textureList[upID].width;
 	int h = m_textureList[upID].height;
-
 	stGUIVertex obj[] =
 	{
 		{(float)(w + x),(float)(0 + y),0,1,col,1,0},
@@ -939,9 +936,7 @@ void CD3DRenderer::ProcessGUI(int guiID, bool LMBDown, int mouseX, int mouseY, v
 	if (guiID >= m_totalGUIs || !m_Device) return;
 
 	CGUISystem* gui = &m_guiList[guiID];
-
 	stGUIControl* backDrop = gui->GetbackDrop();
-
 	if (backDrop)
 	{
 		ApplyTextur(0, backDrop->m_upTex);
@@ -951,10 +946,11 @@ void CD3DRenderer::ProcessGUI(int guiID, bool LMBDown, int mouseX, int mouseY, v
 
 	for (int i = 0; i < gui->GetTotalControls(); i++)
 	{
-		int status = UGP_BUTTON_UP;//默认为弹起
-
+		//默认为弹起
+		int status = UGP_BUTTON_UP;
 		stGUIControl* pCnt = gui->GetGUICotrol(i);
 		if (!pCnt) continue;
+
 		switch (pCnt->m_type)
 		{
 		case UGP_GUI_STATICTEXT:
@@ -964,7 +960,6 @@ void CD3DRenderer::ProcessGUI(int guiID, bool LMBDown, int mouseX, int mouseY, v
 			m_Device->SetRenderState(D3DRS_ALPHABLENDENABLE, true);
 			m_Device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 			m_Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
-
 			if (mouseX > pCnt->m_xPos && mouseX < pCnt->m_xPos + pCnt->m_width &&
 				mouseY > pCnt->m_yPos - pCnt->m_height / 2 && mouseY < pCnt->m_yPos + pCnt->m_height - pCnt->m_height / 2)
 				//mouseY > pCnt->m_yPos && mouseY < pCnt->m_yPos + pCnt->m_height)修复按钮点击偏移
@@ -979,7 +974,6 @@ void CD3DRenderer::ProcessGUI(int guiID, bool LMBDown, int mouseX, int mouseY, v
 			if (status == UGP_BUTTON_DOWN) ApplyTextur(0, pCnt->m_downTex);
 
 			Render(pCnt->m_listID);
-
 			m_Device->SetRenderState(D3DRS_ALPHABLENDENABLE, false);
 			break;
 		}
@@ -1006,14 +1000,13 @@ bool CD3DRenderer::CreateText(char* font, int weight, bool italic, int size, int
 	{
 		LPD3DXFONT* temp;
 		temp = new LPD3DXFONT[m_totalFonts + 1];
-
 		memcpy(temp, m_fonts, sizeof(LPD3DXFONT) * m_totalFonts);
-
 		delete[] m_fonts;
 		m_fonts = temp;
 	}
 	if (FAILED(D3DXCreateFont(m_Device, size, 0, weight, 1, italic,
 		0, 0, 0, 0, font, &m_fonts[m_totalFonts]))) return false;
+
 	id = m_totalFonts;
 	m_totalFonts++;
 
