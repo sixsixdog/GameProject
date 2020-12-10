@@ -85,7 +85,7 @@ int WINAPI WinMain(HINSTANCE h, HINSTANCE P, LPSTR cmd, int show)
 			ZeroMemory(&msg, sizeof(msg));
 
 			//设置鼠标位置
-			SetCursorPos(0, 0);
+/*			SetCursorPos(0, 0);*/
 
 			//循环至接收到退出消息
 			while (msg.message != WM_QUIT)
