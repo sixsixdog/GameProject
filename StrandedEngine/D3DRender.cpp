@@ -488,19 +488,33 @@ int CD3DRenderer::Render(int staticId)
 	//当前静态缓存区是否不是正在使用的缓存区
 	if (m_activeStaticBuffer != staticId)
 	{
-		//设置索引缓存
+		/*	设置索引缓存
+		*	m_staticBufferList :  Static Buffer List		索引缓存列表
+		*				  ibPtr:  Index Buffer Pointer		索引缓存指针
+		*			   staticId:  Static ID					索引缓存ID
+		*/
 		if (m_staticBufferList[staticId].ibPtr != NULL)
 			m_Device->SetIndices(m_staticBufferList[staticId].ibPtr);
-		//设置数据源
+		/*	设置数据源
+		*	m_staticBufferList :  Static Buffer List		索引缓存列表
+		*			     vbPtr :  Vertex Buffer Pointer		顶点缓存指针
+		*			  staticId :  Static ID					索引缓存ID
+		*				stride ： Stride						模型跨度(大小)
+		*/
 		m_Device->SetStreamSource(0, m_staticBufferList[staticId].vbPtr, 0, m_staticBufferList[staticId].stride);
-		//设置顶点FVF格式
+		/*	设置顶点FVF格式
+		*			     vbPtr :  Vertex Buffer Pointer		顶点缓存指针
+		*			  staticId :  Static ID					索引缓存ID
+		*					FVF:  Flexible Vertex Format    灵活顶点格式
+		*/
 		m_Device->SetFVF(m_staticBufferList[staticId].fvf);
-		//切换正在使用的静态缓存
+		//  切换正在使用的静态缓存
 		m_activeStaticBuffer = staticId;
 	}
-	//根据原型类型渲染不同数据，如果存在静态缓存就根据静态缓存渲染
+	//  根据原型类型渲染不同数据，如果存在静态缓存就根据静态缓存渲染
 	if (m_staticBufferList[staticId].ibPtr != NULL)
 	{
+		// primType:  原型格式   基于普里姆算法
 		switch (m_staticBufferList[staticId].primType)
 		{
 		case POINT_LIST://点列表
@@ -508,6 +522,9 @@ int CD3DRenderer::Render(int staticId)
 				return UGP_FAIL;
 			break;
 		case TRIANGLE_LIST://三角形列表
+			/*
+			* 使用顶点除以3确定原型对象数量
+			*/
 			if (FAILED(m_Device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_staticBufferList[staticId].numVerts / 3, 0,
 				m_staticBufferList[staticId].numIndices))) return UGP_FAIL;
 			break;
@@ -535,6 +552,7 @@ int CD3DRenderer::Render(int staticId)
 			return UGP_FAIL;
 		}
 	}
+	// 不存在静态缓存直接绘制
 	else
 	{
 		switch (m_staticBufferList[staticId].primType)
@@ -544,21 +562,36 @@ int CD3DRenderer::Render(int staticId)
 				return UGP_FAIL;
 			break;
 		case TRIANGLE_LIST:
+			/*
+			*	使用顶点除以3确定三角形数量
+			*/
 			if (FAILED(m_Device->DrawPrimitive(D3DPT_TRIANGLELIST, 0, m_staticBufferList[staticId].numVerts / 3)))
 				return UGP_FAIL;
 			break;
+			/*
+			*	使用顶点除以2确定三角带数量
+			*/
 		case TRIANGLE_STRIP:
 			if (FAILED(m_Device->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, m_staticBufferList[staticId].numVerts / 2)))
 				return UGP_FAIL;
 			break;
+			/*
+			*	使用顶点除以2确定三角扇形数量
+			*/
 		case TRIANGLE_FUN:
 			if (FAILED(m_Device->DrawPrimitive(D3DPT_TRIANGLEFAN, 0, m_staticBufferList[staticId].numVerts / 2)))
 				return UGP_FAIL;
 			break;
+			/*
+			*	使用顶点除以2确定线条数量
+			*/
 		case LINE_LIST:
 			if (FAILED(m_Device->DrawPrimitive(D3DPT_LINELIST, 0, m_staticBufferList[staticId].numVerts / 2)))
 				return UGP_FAIL;
 			break;
+			/*
+			*	使用顶点数确定线带数量
+			*/
 		case LINE_STRIP:
 			if (FAILED(m_Device->DrawPrimitive(D3DPT_LINESTRIP, 0, m_staticBufferList[staticId].numVerts)))
 				return UGP_FAIL;
@@ -582,13 +615,15 @@ void CD3DRenderer::SetTranspency(RenderState state, TransState src, TransState d
 {
 	if (!m_Device) return;
 
-	//设置不透明
+	//  如果状态为不透明 --> 不需要使用阿尔法过滤器
 	if (state == TRANSPARENCY_NONE)
 	{
+		//  设置渲染状态 关闭阿拉法过滤器
 		m_Device->SetRenderState(D3DRS_ALPHABLENDENABLE, false);
 		return;
 	}
-	else	if (state == TRANSPARENCY_ENABLE)
+	//  状态为透明
+	else if (state == TRANSPARENCY_ENABLE)
 	{
 		//打开阿尔法过滤器
 		m_Device->SetRenderState(D3DRS_ALPHABLENDENABLE, true);
@@ -710,11 +745,12 @@ int CD3DRenderer::AddTexture2D(char* file, int* texId)
 {
 	if (!file || !m_Device) return UGP_FAIL;
 
+	// 取路径长度
 	int len = strlen(file);
 	if (!len) return UGP_FAIL;
 
 	int index = m_numTextures;
-	//如果纹理列表不存在创建纹理列表
+	//  如果纹理列表不存在创建纹理列表
 	if (!m_textureList)
 	{
 		m_textureList = new stD3DTexture[1];
@@ -722,24 +758,30 @@ int CD3DRenderer::AddTexture2D(char* file, int* texId)
 	}
 	else
 	{
-		//扩容纹理列表
+		//  扩容纹理列表
 		stD3DTexture* temp;
 		temp = new stD3DTexture[m_numTextures + 1];
+		//  拷贝原纹理列表
 		memcpy(temp, m_textureList, sizeof(stD3DTexture) * m_numTextures);
 
+		//  释放旧纹理列表
 		delete[] m_textureList;
+		//  重定向指针
 		m_textureList = temp;
 	}
+	//  记录文件路径（字符串末尾\0需多一字节大小）
 	m_textureList[index].fileName = new char[len + 1];
+	//  拷贝文件名
 	memcpy(m_textureList[index].fileName, file, len + 1);
 
 	D3DCOLOR colorkey = 0xff000000;
 	D3DXIMAGE_INFO info;
-	//在显存中创建纹理缓存
+	//  为目标对象在显存中创建纹理缓存
 	if (D3DXCreateTextureFromFileEx(m_Device, file, 0, 0, 0, 0,
 		D3DFMT_UNKNOWN, D3DPOOL_MANAGED, D3DX_DEFAULT,
 		D3DX_DEFAULT, colorkey, &info, NULL, &m_textureList[index].image) != D3D_OK) return false;
 
+	//  记录对象大小信息
 	m_textureList[index].width = info.Width;
 	m_textureList[index].height = info.Height;
 
@@ -758,17 +800,21 @@ void CD3DRenderer::SetTextureFilter(int index, int filter, int val)
 {
 	if (!m_Device || index < 0) return;
 
+	//  默认过滤器
 	D3DSAMPLERSTATETYPE fil = D3DSAMP_MINFILTER;
 	int v = D3DTEXF_POINT;
 
+	//  选择过滤器类型
 	if (filter == MIN_FILTER) fil = D3DSAMP_MINFILTER;
 	if (filter == MAG_FILTER) fil = D3DSAMP_MAGFILTER;
 	if (filter == MIP_FILTER) fil = D3DSAMP_MIPFILTER;
 
+	//  选择对象类型
 	if (val == POINT_TYPE) v = D3DTEXF_POINT;
 	if (val == LINEAR_TYPE) v = D3DTEXF_LINEAR;
 	if (val == ANISOTROPIC_TYPE) v = D3DTEXF_ANISOTROPIC;
 
+	//  设置过滤器
 	m_Device->SetSamplerState(index, fil, v);
 }
 //设置多重纹理
@@ -776,6 +822,12 @@ void CD3DRenderer::SetMultiTextur()
 {
 	if (!m_Device) return;
 
+	/*
+	*  设置纹理的渲染状态
+	*  DWORD                     :   Stage      当前设置的多级纹理的索引
+	*  D3DTEXTURESTAGESTATETYPE  :   Type       纹理渲染状态的类型
+	*  DWORD                     :   Value      纹理渲染状态的值，与类型相对应
+	*/
 	m_Device->SetTextureStageState(0, D3DTSS_TEXCOORDINDEX, 0);
 	m_Device->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
 	m_Device->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
@@ -811,10 +863,14 @@ void CD3DRenderer::SaveScreenShot(char* file)
 	LPDIRECT3DSURFACE9 surface = NULL;
 	D3DDISPLAYMODE disp;
 
+	//  获取显示模式
 	m_Device->GetDisplayMode(0, &disp);
+	//  创建离屏表面对象
 	m_Device->CreateOffscreenPlainSurface(disp.Width, disp.Height,
 		D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &surface, NULL);
+	//  获取后台缓存
 	m_Device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &surface);
+	//  保存表面对象到文件
 	D3DXSaveSurfaceToFile(file, D3DXIFF_JPG, surface, NULL, NULL);
 
 	if (surface != NULL) surface->Release();
@@ -833,10 +889,15 @@ void CD3DRenderer::EnablePointSprites(float size, float min, float a, float b, f
 {
 	if (!m_Device) return;
 
+	//  打开点精灵
 	m_Device->SetRenderState(D3DRS_POINTSPRITEENABLE, true);
+	//  打开点缩放
 	m_Device->SetRenderState(D3DRS_POINTSCALEENABLE, true);
+	//  设置点大小
 	m_Device->SetRenderState(D3DRS_POINTSIZE, FtoDW(size));
+	//  设置最小点大小
 	m_Device->SetRenderState(D3DRS_POINTSIZE_MIN, FtoDW(min));
+	//  设置因子
 	m_Device->SetRenderState(D3DRS_POINTSCALE_A, FtoDW(a));
 	m_Device->SetRenderState(D3DRS_POINTSCALE_B, FtoDW(b));
 	m_Device->SetRenderState(D3DRS_POINTSCALE_C, FtoDW(c));
@@ -869,6 +930,7 @@ bool CD3DRenderer::AddGUIBackdrop(int guiId, char* fileName)
 		{0,(float)m_screenHeight,0,1,col,0,1},
 	};
 
+	//  创建GUI背景静态缓存
 	if (!CreateStaticBuffer(GUI_FVF, TRIANGLE_STRIP, 4, 0, sizeof(stGUIVertex), (void**)&obj, NULL, &staticID)) return false;
 
 	return m_guiList[guiId].AddBackdrop(texID, staticID);
@@ -902,8 +964,12 @@ bool CD3DRenderer::AddGUIButton(int guiId, int id, int x, int y, char* up, char*
 	if (guiId >= m_totalGUIs) return false;
 
 	int upID = -1, overID = -1, downID = -1, staticID = -1;
+
+	//  设置弹起纹理
 	if (!AddTexture2D(up, &upID)) return false;
+	//  设置悬浮纹理
 	if (!AddTexture2D(over, &overID)) return false;
+	//  设置按下纹理
 	if (!AddTexture2D(down, &downID)) return false;
 
 	unsigned long col = D3DCOLOR_XRGB(255, 255, 255);
@@ -916,7 +982,7 @@ bool CD3DRenderer::AddGUIButton(int guiId, int id, int x, int y, char* up, char*
 		{(float)(0 + x),(float)(0 + y),0,1,col,0,0},
 		{(float)(0 + x),(float)(h + y),0,1,col,0,1},
 	};
-
+	//  创建静态缓存
 	if (!CreateStaticBuffer(GUI_FVF, TRIANGLE_STRIP, 4, 0, sizeof(stGUIVertex), (void**)&obj, NULL,
 		&staticID)) return false;
 
@@ -937,13 +1003,14 @@ void CD3DRenderer::ProcessGUI(int guiID, bool LMBDown, int mouseX, int mouseY, v
 
 	CGUISystem* gui = &m_guiList[guiID];
 	stGUIControl* backDrop = gui->GetbackDrop();
+	// 是否绘制背景
 	if (backDrop)
 	{
 		ApplyTextur(0, backDrop->m_upTex);
 		Render(backDrop->m_listID);
 		ApplyTextur(0, -1);
 	}
-
+	//  根据数据类型绘制不同对象
 	for (int i = 0; i < gui->GetTotalControls(); i++)
 	{
 		//默认为弹起
@@ -954,6 +1021,7 @@ void CD3DRenderer::ProcessGUI(int guiID, bool LMBDown, int mouseX, int mouseY, v
 		switch (pCnt->m_type)
 		{
 		case UGP_GUI_STATICTEXT:
+			//  显示字体
 			DisplayText(pCnt->m_listID, pCnt->m_xPos, pCnt->m_yPos, pCnt->m_color, pCnt->m_text);
 			break;
 		case UGP_GUI_BUTTON:
@@ -969,6 +1037,7 @@ void CD3DRenderer::ProcessGUI(int guiID, bool LMBDown, int mouseX, int mouseY, v
 					status = UGP_BUTTON_OVER;
 			}
 
+			//  根据状态选择纹理类型
 			if (status == UGP_BUTTON_UP) ApplyTextur(0, pCnt->m_upTex);
 			if (status == UGP_BUTTON_OVER) ApplyTextur(0, pCnt->m_overTex);
 			if (status == UGP_BUTTON_DOWN) ApplyTextur(0, pCnt->m_downTex);
