@@ -1,5 +1,9 @@
 #include "GUI.h"
 //Ôö¼ÓGUI¿Ø¼þ
+#ifdef _NO_CAST_WARN_
+#pragma warning( disable:4244 )
+#endif
+
 int CGUISystem::IncreaseControls()
 {
 	if (!m_controls)

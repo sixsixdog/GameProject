@@ -51,7 +51,6 @@ public:
 	{
 		if (m_backDropID >= 0 && m_totalControls)
 			return &m_controls[m_backDropID];
-
 		return NULL;
 	}
 

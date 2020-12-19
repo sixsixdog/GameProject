@@ -29,6 +29,9 @@
 
 typedef long VertexType;
 
+//忽略类型转换警告
+#define _NO_CAST_WARN_
+
 enum PrimType
 {
 	NULL_TYPE,
@@ -105,7 +108,7 @@ enum UGP_FOG_TYPE
 };
 
 #define UGPCOLOR_ARGB(a,r,g,b)  ((unsigned long)((((a)&0xff)<<24)|\
-																				(((r)&0xff)<<16)|(((g)&0xff)<<8)|\
-																				((b) & 0xff)))
+								(((r)&0xff)<<16)|(((g)&0xff)<<8)|\
+								((b) & 0xff)))
 
 #endif

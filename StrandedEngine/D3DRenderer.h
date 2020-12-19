@@ -34,10 +34,10 @@ public:
 	CD3DRenderer();
 	~CD3DRenderer();
 
-	bool Initialize(int w, int h, WinHWND mainWin, bool fullScreen);
+	bool Initialize(int w, int h, WinHWND mainWin, bool fullScreen) override;
 
-	void SetClearCol(float r, float g, float b);
-	void Shutdown();
+	void SetClearCol(float r, float g, float b) override;
+	void Shutdown() override;
 	void StartRender(bool bColor, bool bDepth, bool bStencil);
 	int Render(int staticId);
 	void EndRendering();

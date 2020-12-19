@@ -2,6 +2,10 @@
 #include "D3DRenderer.h"
 #include "structs.h"
 
+#ifdef _NO_CAST_WARN_
+#pragma warning( disable:4244 )
+#endif
+
 //FLOATתDWORD
 inline unsigned long FtoDW(float v)
 {
