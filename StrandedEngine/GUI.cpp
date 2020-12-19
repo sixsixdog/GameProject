@@ -19,6 +19,7 @@ int CGUISystem::IncreaseControls()
 		delete[] m_controls;
 		m_controls = temp;
 	}
+	return UGP_OK;
 }
 //Ìí¼Ó±³¾°
 bool CGUISystem::AddBackdrop(int texID, int sID)

@@ -89,8 +89,23 @@ enum FilterType
 	ANISOTROPIC_TYPE
 };
 
+enum UGP_MS_TYPE
+{
+	UGP_MS_NONE,
+	UGP_MS_SAMPLES_2,
+	UGP_MS_SAMPLES_4,
+	UGP_MS_SAMPLES_8,
+	UGP_MS_SAMPLES_16
+};
+
+enum UGP_FOG_TYPE
+{
+	UGP_VERTEX_FOG,
+	UGP_PIXEL_FOG
+};
+
 #define UGPCOLOR_ARGB(a,r,g,b)  ((unsigned long)((((a)&0xff)<<24)|\
-								(((r)&0xff)<<16)|(((g)&0xff)<<8)|\
-								((b) & 0xff)))
+																				(((r)&0xff)<<16)|(((g)&0xff)<<8)|\
+																				((b) & 0xff)))
 
 #endif

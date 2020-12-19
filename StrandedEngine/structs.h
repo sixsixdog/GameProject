@@ -4,9 +4,8 @@
 struct stGUIVertex
 {
 	float x, y, z, rhw;
-
-	float tu, tv;
 	unsigned long color;
+	float tu, tv;
 };
 
 #endif

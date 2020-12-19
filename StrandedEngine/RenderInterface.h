@@ -33,6 +33,8 @@ public:
 	virtual void ProcessGUI(int guiID, bool LMVDown, int mouseX, int mouseY, void(*funcPtr)(int id, int state)) = 0;
 	virtual void CalculateProjMatrix(float fov, float n, float f) = 0;
 	virtual void CalculateOrthoMatrix(float n, float f) = 0;
+	virtual void EnableFog(float start, float end, UGP_FOG_TYPE type, unsigned long color, bool rangeFog) = 0;
+	virtual void DisableFog() = 0;
 	virtual bool AddGUIBackdrop(int guiId, char* fileName) = 0;
 	virtual bool AddGUIStaticText(int guiId, int id, char* text, int x, int y, unsigned long color, int fontID) = 0;
 	virtual bool AddGUIButton(int guidId, int id, int x, int y, char* up, char* over, char* down) = 0;

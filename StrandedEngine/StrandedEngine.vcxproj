@@ -136,12 +136,14 @@
     <ClInclude Include="GUI.h" />
     <ClInclude Include="light.h" />
     <ClInclude Include="meterial.h" />
+    <ClInclude Include="RainPs.h" />
     <ClInclude Include="RenderInterface.h" />
     <ClInclude Include="structs.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="D3DRender.cpp" />
     <ClCompile Include="GUI.cpp" />
+    <ClCompile Include="RainPs.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

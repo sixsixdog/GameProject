@@ -42,6 +42,8 @@ public:
 	int Render(int staticId);
 	void EndRendering();
 	void ClearBuffers(bool bColor, bool bDepth, bool bStencil);
+	void EnableFog(float start, float end, UGP_FOG_TYPE type, unsigned long color, bool rangeFog);
+	void DisableFog();
 
 	int CreateStaticBuffer(VertexType vType, PrimType primType, int totalVerts, int totalIndices, int stride,
 		void** data, unsigned int* indices, int* staticId);

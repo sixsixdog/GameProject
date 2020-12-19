@@ -39,12 +39,18 @@
     <ClInclude Include="structs.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="RainPs.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="D3DRender.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="GUI.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="RainPs.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

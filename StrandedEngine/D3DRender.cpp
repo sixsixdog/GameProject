@@ -1101,6 +1101,7 @@ bool CD3DRenderer::DisplayText(int id, long x, long y, int r, int g, int b, char
 
 	m_fonts[id]->DrawText(NULL, message, -1, &FontPosition, DT_SINGLELINE,
 		D3DCOLOR_ARGB(255, r, g, b));
+	return true;
 }
 //ÏÔÊ¾ÎÄ±¾
 /*
@@ -1122,4 +1123,35 @@ bool CD3DRenderer::DisplayText(int id, long x, long y, unsigned long color, char
 	va_end(argList);
 
 	m_fonts[id]->DrawText(NULL, message, -1, &FontPosition, DT_SINGLELINE, color);
+	return true;
+}
+
+void CD3DRenderer::EnableFog(float start, float end, UGP_FOG_TYPE type, unsigned long color, bool rangeFog)
+{
+	if (!m_Device) return;
+	D3DCAPS9 caps;
+	m_Device->GetDeviceCaps(&caps);
+	m_Device->SetRenderState(D3DRS_FOGENABLE, true);
+	m_Device->SetRenderState(D3DRS_FOGCOLOR, color);
+
+	m_Device->SetRenderState(D3DRS_FOGSTART, *(DWORD*)(&start));
+	m_Device->SetRenderState(D3DRS_FOGEND, *(DWORD*)(&end));
+
+	if (type == UGP_VERTEX_FOG)
+		m_Device->SetRenderState(D3DRS_FOGVERTEXMODE, D3DFOG_LINEAR);
+	else
+		m_Device->SetRenderState(D3DRS_FOGTABLEMODE, D3DFOG_LINEAR);
+
+	if (caps.RasterCaps & D3DPRASTERCAPS_FOGRANGE)
+	{
+		if (rangeFog)
+			m_Device->SetRenderState(D3DRS_RANGEFOGENABLE, true);
+		else
+			m_Device->SetRenderState(D3DRS_RANGEFOGENABLE, false);
+	}
+}
+void CD3DRenderer::DisableFog()
+{
+	if (!m_Device) return;
+	m_Device->SetRenderState(D3DRS_FOGENABLE, false);
 }
