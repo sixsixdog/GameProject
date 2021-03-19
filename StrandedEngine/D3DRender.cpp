@@ -750,10 +750,10 @@ int CD3DRenderer::AddTexture2D(char* file, int* texId)
 	if (!file || !m_Device) return UGP_FAIL;
 
 	// 取路径长度
-	int len = strlen(file);
+	const int len = strlen(file);
 	if (!len) return UGP_FAIL;
 
-	int index = m_numTextures;
+	const auto index = m_numTextures;
 	//  如果纹理列表不存在创建纹理列表
 	if (!m_textureList)
 	{
@@ -852,7 +852,7 @@ void CD3DRenderer::ApplyTextur(int index, int texId)
 	if (!m_Device) return;
 
 	if (index < 0 || texId < 0)
-		m_Device->SetTexture(0, NULL);
+		m_Device->SetTexture(0, nullptr);
 	else
 		m_Device->SetTexture(index, m_textureList[texId].image);
 }
@@ -864,14 +864,14 @@ void CD3DRenderer::SaveScreenShot(char* file)
 {
 	if (!file) return;
 
-	LPDIRECT3DSURFACE9 surface = NULL;
+	LPDIRECT3DSURFACE9 surface = nullptr;
 	D3DDISPLAYMODE disp;
 
 	//  获取显示模式
 	m_Device->GetDisplayMode(0, &disp);
 	//  创建离屏表面对象
 	m_Device->CreateOffscreenPlainSurface(disp.Width, disp.Height,
-		D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &surface, NULL);
+		D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &surface, nullptr);
 	//  获取后台缓存
 	m_Device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &surface);
 	//  保存表面对象到文件
@@ -928,14 +928,14 @@ bool CD3DRenderer::AddGUIBackdrop(int guiId, char* fileName)
 	unsigned long col = D3DCOLOR_XRGB(255, 255, 255);
 	stGUIVertex obj[] =
 	{
-		{(float)m_screenWidth,0,0,1,col,1,0},
-		{(float)m_screenWidth,(float)m_screenHeight,0,1,col,1,0},
+		{static_cast<float>(m_screenWidth),0,0,1,col,1,0},
+		{static_cast<float>(m_screenWidth),static_cast<float>(m_screenHeight),0,1,col,1,0},
 		{0,0,0,1,col,0,0},
-		{0,(float)m_screenHeight,0,1,col,0,1},
+		{0,static_cast<float>(m_screenHeight),0,1,col,0,1},
 	};
 
 	//  创建GUI背景静态缓存
-	if (!CreateStaticBuffer(GUI_FVF, TRIANGLE_STRIP, 4, 0, sizeof(stGUIVertex), (void**)&obj, NULL, &staticID)) return false;
+	if (!CreateStaticBuffer(GUI_FVF, TRIANGLE_STRIP, 4, 0, sizeof(stGUIVertex), reinterpret_cast<void**>(&obj), nullptr, &staticID)) return false;
 
 	return m_guiList[guiId].AddBackdrop(texID, staticID);
 }
@@ -981,13 +981,13 @@ bool CD3DRenderer::AddGUIButton(int guiId, int id, int x, int y, char* up, char*
 	int h = m_textureList[upID].height;
 	stGUIVertex obj[] =
 	{
-		{(float)(w + x),(float)(0 + y),0,1,col,1,0},
-		{(float)(w + x),(float)(h + y),0,1,col,1,1},
-		{(float)(0 + x),(float)(0 + y),0,1,col,0,0},
-		{(float)(0 + x),(float)(h + y),0,1,col,0,1},
+		{static_cast<float>(w + x),static_cast<float>(0 + y),0,1,col,1,0},
+		{static_cast<float>(w + x),static_cast<float>(h + y),0,1,col,1,1},
+		{static_cast<float>(0 + x),static_cast<float>(0 + y),0,1,col,0,0},
+		{static_cast<float>(0 + x),static_cast<float>(h + y),0,1,col,0,1},
 	};
 	//  创建静态缓存
-	if (!CreateStaticBuffer(GUI_FVF, TRIANGLE_STRIP, 4, 0, sizeof(stGUIVertex), (void**)&obj, NULL,
+	if (!CreateStaticBuffer(GUI_FVF, TRIANGLE_STRIP, 4, 0, sizeof(stGUIVertex), reinterpret_cast<void**>(&obj), nullptr,
 		&staticID)) return false;
 
 	m_guiList[guiId].AddButton(id, x, y, w, h, upID, overID, downID, staticID);
@@ -1071,8 +1071,7 @@ bool CD3DRenderer::CreateText(char* font, int weight, bool italic, int size, int
 	}
 	else
 	{
-		LPD3DXFONT* temp;
-		temp = new LPD3DXFONT[m_totalFonts + 1];
+		auto* temp = new LPD3DXFONT[m_totalFonts + 1];
 		memcpy(temp, m_fonts, sizeof(LPD3DXFONT) * m_totalFonts);
 		delete[] m_fonts;
 		m_fonts = temp;
@@ -1138,8 +1137,8 @@ void CD3DRenderer::EnableFog(float start, float end, UGP_FOG_TYPE type, unsigned
 	m_Device->SetRenderState(D3DRS_FOGENABLE, true);
 	m_Device->SetRenderState(D3DRS_FOGCOLOR, color);
 
-	m_Device->SetRenderState(D3DRS_FOGSTART, *(DWORD*)(&start));
-	m_Device->SetRenderState(D3DRS_FOGEND, *(DWORD*)(&end));
+	m_Device->SetRenderState(D3DRS_FOGSTART, *reinterpret_cast<DWORD*>(&start));
+	m_Device->SetRenderState(D3DRS_FOGEND, *reinterpret_cast<DWORD*>(&end));
 
 	if (type == UGP_VERTEX_FOG)
 		m_Device->SetRenderState(D3DRS_FOGVERTEXMODE, D3DFOG_LINEAR);

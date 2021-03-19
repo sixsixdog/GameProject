@@ -14,8 +14,7 @@ int CGUISystem::IncreaseControls()
 	}
 	else
 	{
-		stGUIControl* temp;
-		temp = new stGUIControl[m_totalControls + 1];
+		auto* const temp = new stGUIControl[m_totalControls + static_cast<size_t>(1)];
 		if (!temp) return UGP_FAIL;
 		memset(temp, 0, sizeof(stGUIControl) * m_totalControls + 1);
 		memcpy(temp, m_controls, sizeof(stGUIControl) * m_totalControls);
@@ -62,8 +61,8 @@ bool CGUISystem::AddStaticText(int id, char* text, int x, int y, unsigned long c
 	m_controls[m_totalControls].m_yPos = y;
 	m_controls[m_totalControls].m_listID = fontID;
 
-	int len = strlen(text);
-	m_controls[m_totalControls].m_text = new char[len + 1];
+	const size_t len = strlen(text);
+	m_controls[m_totalControls].m_text = new char[len + static_cast<size_t>(1)];
 	if (!m_controls[m_totalControls].m_text) return false;
 	memcpy(m_controls[m_totalControls].m_text, text, len);
 	m_controls[m_totalControls].m_text[len] = '\0';
@@ -99,12 +98,11 @@ void CGUISystem::Shutdown()
 		if (m_controls[s].m_text)
 		{
 			delete[] m_controls[s].m_text;
-			m_controls[s].m_text = NULL;
+			m_controls[s].m_text = nullptr;
 		}
 	}
 
 	m_totalControls = 0;
-	if (m_controls) delete[] m_controls;
-
-	m_controls = NULL;
+	delete[] m_controls;
+	m_controls = nullptr;
 }
